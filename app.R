@@ -94,7 +94,6 @@ server <- function(input, output) {
     else{
       dat2$Opacity[dat2$Region == input$region] <- 0.8
     }
-    print(head(dat2))
     
     # Filter to the desired year
     # Also sort by region
