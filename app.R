@@ -1,6 +1,7 @@
 library(shiny)
 library(ggvis)
 library(reshape2)
+library(dplyr)
 
 ui <- fluidPage(
   headerPanel('HW2 by Jennifer Zhu'),
