@@ -1,13 +1,22 @@
 library(shiny)
 library(ggvis)
 library(reshape2)
+library(dplyr)
 
 ui <- fluidPage(
   headerPanel('HW2 by Jennifer Zhu'),
   
-  fluidRow(
-  column(3,
-                wellPanel(
+  sidebarPanel(
+    sliderInput("year", 
+                "Year", 
+                min = 1960, 
+                max = 2014, 
+                value = 1, 
+                animate = animationOptions(interval = 100)),
+    position = 'left'
+  ),
+  
+  sidebarPanel(
     radioButtons("region", "Region",
                 c("All" = "All",
                   "East Asia & Pacific" = "East Asia & Pacific",
@@ -17,31 +26,14 @@ ui <- fluidPage(
                   "North America" = "North America",
                   "South Asia" = "South Asia",
                   "Sub-Saharan Africa" = "Sub-Saharan Africa")
-                )
-  )
+                ),
+    position = 'right'
   ),
   
-  column(3,  
-         mainPanel(
-           uiOutput("ggvis_ui"),
-           ggvisOutput("ggvis")
-         )
+  mainPanel(
+    uiOutput("ggvis_ui"),
+    ggvisOutput("ggvis")
   )
-  ),
-  
-
-fluidRow(
-  shiny::column(4, offset = 5,  
-                wellPanel(
-                  sliderInput("year", 
-                              "Year", 
-                              min = 1960, 
-                              max = 2014, 
-                              value = 1, 
-                              animate = animationOptions(interval = 100))
-                )
-  )
-)
 )
 
 server <- function(input, output) {
@@ -98,9 +90,9 @@ server <- function(input, output) {
   
   yearData <- reactive({
     dat2 <- dat
-    if(input$region == 'All') dat2$Opacity <- 0.7
+    if(input$region == 'All') dat2$Opacity <- 0.8
     else{
-      dat2$Opacity[dat2$Region == input$region] <- 0.7
+      dat2$Opacity[dat2$Region == input$region] <- 0.8
     }
     
     # Filter to the desired year
@@ -115,7 +107,7 @@ server <- function(input, output) {
     return(df)
   })
   
-    ggvis(yearData, ~Life.Expectancy, ~Fertility.Rate, size := ~Population / 500000, key := ~id, fill = ~Region, opacity := ~Opacity) %>%
+    ggvis(yearData, ~Life.Expectancy, ~Fertility.Rate, size := ~Population / 1000000, key := ~id, fill = ~Region, opacity := ~Opacity) %>%
     add_tooltip(all_values, "hover") %>%
     layer_points() %>%
     hide_legend('fill') %>%
